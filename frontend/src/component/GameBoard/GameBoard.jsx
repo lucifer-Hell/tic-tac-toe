@@ -97,8 +97,14 @@ function GameBoard({ player }) {
         ) : (
           <div>
             <b>Game Id: </b> {game.gameId}
-            <p>Share above game id to others for joining game</p>
-            <p>Minimum two players required to start game</p>
+            {!currentTurn ? (
+              <>
+                <p>Share above game id to others for joining game</p>
+                <p>Minimum two players required to start game</p>
+              </>
+            ) : (
+              ""
+            )}
             <div className="turn-indicator">
               {currentTurn && player && currentTurn?.id === player.id
                 ? "Your turn"
