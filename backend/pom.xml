@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.tictactoe</groupId>
 	<artifactId>tictactoe</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
 	<name>tictactoe</name>
 	<description>Demo project for web sockets</description>
 	<url/>
@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>23</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
