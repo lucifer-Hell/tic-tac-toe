@@ -4,7 +4,7 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import "./GameBoard.css";
 
-const WEBSOCKET_URL = "http://localhost:8080/tic-tac-toe"; // WebSocket endpoint
+const WEBSOCKET_URL = "http://34.203.209.206/api/tic-tac-toe"; // WebSocket endpoint
 
 function GameBoard({ player }) {
   const [game, setGame] = useState(null);
