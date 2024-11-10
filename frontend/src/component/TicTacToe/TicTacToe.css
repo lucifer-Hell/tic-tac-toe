@@ -1,0 +1,83 @@
+/* TicTacToe.css */
+
+.tictactoe-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .registration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    width: 300px;
+    background-color: #f9f9f9;
+  }
+  
+  .registration input {
+    padding: 8px;
+    width: 100%;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .registration button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .registration button:hover {
+    background-color: #388E3C;
+  }
+  
+  .game-board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+  }
+  .registration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Adds spacing between elements */
+    padding: 20px;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    width: 300px;
+    background-color: #f9f9f9;
+  }
+  
+  .registration input {
+    padding: 8px;
+    width: 100%;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px; /* Adds space below the input field */
+  }
+  
+  .registration button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
