@@ -33,34 +33,81 @@ function GameBoard({ player }) {
     };
   }, []);
 
-  const startNewGame = async () => {
-    const newGame = await createGame(player);
-    setGame(newGame);
-    setCurrentTurn(newGame.currentPlayer);
+  // const startNewGame = async () => {
+  //   const newGame = await createGame(player);
+  //   setGame(newGame);
+  //   setCurrentTurn(newGame.currentPlayer);
 
-    stompClient.subscribe(`/topic/game-state/${newGame.gameId}`, (message) => {
-      const updatedGame = JSON.parse(message.body);
-      setGame(updatedGame);
-      setBoard(updatedGame.board);
-      setCurrentTurn(updatedGame.currentPlayer);
-    });
+  //   stompClient.subscribe(`/topic/game-state/${newGame.gameId}`, (message) => {
+  //     const updatedGame = JSON.parse(message.body);
+  //     setGame(updatedGame);
+  //     setBoard(updatedGame.board);
+  //     setCurrentTurn(updatedGame.currentPlayer);
+  //   });
+  // };
+
+  const startNewGame = () => {
+    createGame(player)
+      .then((newGame) => {
+        // Set the game state and current turn
+        setGame(newGame);
+        setCurrentTurn(newGame.currentPlayer);
+        return newGame; // Pass newGame to the next .then() block
+      })
+      .then((newGame) => {
+        // Subscribe to the game state updates after the state is set
+        stompClient.subscribe(`/topic/game-state/${newGame.gameId}`, (message) => {
+          const updatedGame = JSON.parse(message.body);
+          setGame(updatedGame);
+          setBoard(updatedGame.board);
+          setCurrentTurn(updatedGame.currentPlayer);
+        });
+      })
+      .catch((error) => {
+        console.error("Error starting new game:", error);
+      });
   };
 
-  const joinExistingGame = async () => {
+  // const joinExistingGame = async () => {
+  //   if (!gameIdInput) return; // Only join if a game ID is provided
+  //   const joinedGame = await joinGame({ gameId: gameIdInput, player });
+  //   setGame(joinedGame);
+  //   setCurrentTurn(joinedGame.currentPlayer);
+
+  //   stompClient.subscribe(`/topic/game-state/${gameIdInput}`, (message) => {
+  //     const updatedGame = JSON.parse(message.body);
+  //     console.log("updated game ", updatedGame);
+  //     setGame(updatedGame);
+  //     setBoard(updatedGame.board);
+  //     setCurrentTurn(updatedGame.currentPlayer);
+  //   });
+  // };
+
+  const joinExistingGame = () => {
     if (!gameIdInput) return; // Only join if a game ID is provided
-    const joinedGame = await joinGame({ gameId: gameIdInput, player });
-    setGame(joinedGame);
-    setCurrentTurn(joinedGame.currentPlayer);
-
-    stompClient.subscribe(`/topic/game-state/${gameIdInput}`, (message) => {
-      const updatedGame = JSON.parse(message.body);
-      console.log("updated game ", updatedGame);
-      setGame(updatedGame);
-      setBoard(updatedGame.board);
-      setCurrentTurn(updatedGame.currentPlayer);
-    });
+  
+    joinGame({ gameId: gameIdInput, player })
+      .then((joinedGame) => {
+        // Set the game state and current turn
+        setGame(joinedGame);
+        setCurrentTurn(joinedGame.currentPlayer);
+        return joinedGame; // Pass joinedGame to the next .then() block
+      })
+      .then((joinedGame) => {
+        // Subscribe to the game state updates after the state is set
+        stompClient.subscribe(`/topic/game-state/${joinedGame.gameId}`, (message) => {
+          const updatedGame = JSON.parse(message.body);
+          console.log("updated game ", updatedGame);
+          setGame(updatedGame);
+          setBoard(updatedGame.board);
+          setCurrentTurn(updatedGame.currentPlayer);
+        });
+      })
+      .catch((error) => {
+        console.error("Error joining existing game:", error);
+      });
   };
-
+  
   const handleMove = (x, y) => {
     if (
       currentTurn == null ||
