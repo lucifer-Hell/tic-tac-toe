@@ -13,6 +13,7 @@ function GameBoard({ player }) {
   const [stompClient, setStompClient] = useState(null);
   const [isJoiningGame, setIsJoiningGame] = useState(false); // Track if we are in the "join game" mode
   const [gameIdInput, setGameIdInput] = useState(""); // Store the Game ID input
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
   useEffect(() => {
     const socket = new SockJS(WEBSOCKET_URL);
@@ -21,6 +22,10 @@ function GameBoard({ player }) {
       onConnect: () => {
         console.log("Connected to WebSocket");
         setStompClient(client);
+        setIsWebSocketConnected(true); // Mark WebSocket as connected
+      },
+      onDisconnect: () => {
+        setIsWebSocketConnected(false); // Mark WebSocket as disconnected
       },
     });
 
@@ -47,6 +52,7 @@ function GameBoard({ player }) {
   // };
 
   const startNewGame = () => {
+    if (!isWebSocketConnected) return; // Only start if WebSocket is connected
     createGame(player)
       .then((newGame) => {
         // Set the game state and current turn
@@ -55,13 +61,18 @@ function GameBoard({ player }) {
         return newGame; // Pass newGame to the next .then() block
       })
       .then((newGame) => {
-        // Subscribe to the game state updates after the state is set
-        stompClient.subscribe(`/topic/game-state/${newGame.gameId}`, (message) => {
-          const updatedGame = JSON.parse(message.body);
-          setGame(updatedGame);
-          setBoard(updatedGame.board);
-          setCurrentTurn(updatedGame.currentPlayer);
-        });
+        if (newGame) {
+          // Subscribe to the game state updates after the state is set
+          stompClient.subscribe(
+            `/topic/game-state/${newGame.gameId}`,
+            (message) => {
+              const updatedGame = JSON.parse(message.body);
+              setGame(updatedGame);
+              setBoard(updatedGame.board);
+              setCurrentTurn(updatedGame.currentPlayer);
+            }
+          );
+        }
       })
       .catch((error) => {
         console.error("Error starting new game:", error);
@@ -84,8 +95,9 @@ function GameBoard({ player }) {
   // };
 
   const joinExistingGame = () => {
+    if (!isWebSocketConnected) return; // Only start if WebSocket is connected
     if (!gameIdInput) return; // Only join if a game ID is provided
-  
+
     joinGame({ gameId: gameIdInput, player })
       .then((joinedGame) => {
         // Set the game state and current turn
@@ -94,20 +106,25 @@ function GameBoard({ player }) {
         return joinedGame; // Pass joinedGame to the next .then() block
       })
       .then((joinedGame) => {
-        // Subscribe to the game state updates after the state is set
-        stompClient.subscribe(`/topic/game-state/${joinedGame.gameId}`, (message) => {
-          const updatedGame = JSON.parse(message.body);
-          console.log("updated game ", updatedGame);
-          setGame(updatedGame);
-          setBoard(updatedGame.board);
-          setCurrentTurn(updatedGame.currentPlayer);
-        });
+        if (joinedGame) {
+          // Subscribe to the game state updates after the state is set
+          stompClient.subscribe(
+            `/topic/game-state/${joinedGame.gameId}`,
+            (message) => {
+              const updatedGame = JSON.parse(message.body);
+              console.log("updated game ", updatedGame);
+              setGame(updatedGame);
+              setBoard(updatedGame.board);
+              setCurrentTurn(updatedGame.currentPlayer);
+            }
+          );
+        }
       })
       .catch((error) => {
         console.error("Error joining existing game:", error);
       });
   };
-  
+
   const handleMove = (x, y) => {
     if (
       currentTurn == null ||
@@ -138,8 +155,16 @@ function GameBoard({ player }) {
         </p>
         {!game ? (
           <div className="button-group">
-            <button onClick={startNewGame}>Start New Game</button>
-            <button onClick={() => setIsJoiningGame(true)}>Join Game</button>
+            {isWebSocketConnected ? (
+              <>
+                <button onClick={startNewGame}>Start New Game</button>
+                <button onClick={() => setIsJoiningGame(true)}>
+                  Join Game
+                </button>
+              </>
+            ) : (
+              "Waiting for connection"
+            )}
           </div>
         ) : (
           <div>
