@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://54.173.237.199/api'; // Replace with your backend URL
+const API_URL = 'http://54.145.214.185/api'; // Replace with your backend URL
 // const API_URL = "http://backend:8080"; // Use 'backend' as the hostname
 
 // Register a new player
